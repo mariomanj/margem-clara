@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora de Lucro</title>
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+  <header class="topo">
+    <strong class="marca">Margem Clara</strong>
+    <span class="provisorio">nome provisório</span>
+    <nav class="menu">
+      <a href="index.html" aria-current="page">Calculadora</a>
+      <a href="vendas.html">Vendas importadas</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h1>Quanto sobra de verdade em cada venda?</h1>
+      <p>Preencha os valores de uma venda do Mercado Livre ou da Shopee. O lucro aparece na hora.</p>
+    </section>
+
+    <div class="grade">
+      <form id="calculadora" class="painel" autocomplete="off">
+        <h2>Dados da venda</h2>
+
+        <label>Preço de venda (R$)
+          <input name="preco" inputmode="decimal" value="89,90">
+        </label>
+        <label>Custo do produto (R$)
+          <input name="custoProduto" inputmode="decimal" value="35,00">
+          <small>Quanto você pagou ou gastou para produzir</small>
+        </label>
+
+        <h3>Cobranças da plataforma</h3>
+        <div class="dupla">
+          <label>Comissão (%)
+            <input name="comissaoPct" inputmode="decimal" value="14">
+            <small>Confira a da sua categoria e tipo de anúncio</small>
+          </label>
+          <label>Tarifa fixa (R$)
+            <input name="tarifaFixa" inputmode="decimal" value="0">
+            <small>Cobrada por unidade em alguns preços</small>
+          </label>
+        </div>
+        <label>Frete pago por você (R$)
+          <input name="frete" inputmode="decimal" value="0">
+        </label>
+
+        <h3>Seus outros custos</h3>
+        <div class="dupla">
+          <label>Imposto (%)
+            <input name="impostoPct" inputmode="decimal" value="6">
+            <small>Alíquota sobre a venda</small>
+          </label>
+          <label>Embalagem e etiqueta (R$)
+            <input name="embalagem" inputmode="decimal" value="2,50">
+          </label>
+        </div>
+        <div class="dupla">
+          <label>Anúncios por venda (R$)
+            <input name="anuncios" inputmode="decimal" value="0">
+          </label>
+          <label>Outros (R$)
+            <input name="outros" inputmode="decimal" value="0">
+          </label>
+        </div>
+
+        <h3>Preço ideal</h3>
+        <label>Margem de lucro desejada (%)
+          <input name="margemDesejada" inputmode="decimal" value="20">
+        </label>
+      </form>
+
+      <div class="coluna-resultado">
+        <section id="resultado" class="painel resultado" aria-live="polite">
+          <span class="rotulo">Lucro por venda</span>
+          <span id="lucro" class="lucro">R$ 0,00</span>
+          <div class="numeros">
+            <div><span class="rotulo">Margem</span><span id="margem">—</span></div>
+            <div><span class="rotulo">Custos totais</span><span id="totalCustos">R$ 0,00</span></div>
+          </div>
+          <p id="aviso" class="aviso"></p>
+        </section>
+
+        <section class="painel">
+          <h2>Para onde vai o dinheiro</h2>
+          <div id="barra" class="barra"></div>
+          <ul id="detalhes" class="detalhes"></ul>
+        </section>
+
+        <section class="painel">
+          <h2>Preço ideal de venda</h2>
+          <p class="preco-ideal" id="precoIdeal">—</p>
+          <small>Preço para ter a margem desejada com os custos ao lado.</small>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/formato.js"></script>
+  <script src="js/calculos.js"></script>
+  <script src="js/calculadora.js"></script>
+</body>
+</html>
