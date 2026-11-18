@@ -13,7 +13,7 @@ const ROTULOS = {
   outros: { nome: 'Outros', cor: 'var(--c-outros)' },
 };
 
-const formulario = document.getElementById('calculadora');
+const formulario = document.getElementById('formCalculadora');
 
 // Lê um campo numérico (a conversão de "12,50" fica em formato.js).
 function lerNumero(nome) {

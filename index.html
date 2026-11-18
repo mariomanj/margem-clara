@@ -3,105 +3,236 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Calculadora de Lucro</title>
+  <title>Margem Clara</title>
   <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
   <header class="topo">
     <strong class="marca">Margem Clara</strong>
     <span class="provisorio">nome provisório</span>
-    <nav class="menu">
-      <a href="index.html" aria-current="page">Calculadora</a>
-      <a href="vendas.html">Vendas importadas</a>
+    <nav class="menu" role="tablist" aria-label="Telas">
+      <a href="#calculadora" role="tab" id="tab-calculadora" aria-controls="aba-calculadora">Calculadora</a>
+      <a href="#vendas" role="tab" id="tab-vendas" aria-controls="aba-vendas">Vendas importadas</a>
     </nav>
   </header>
 
   <main>
-    <section class="intro">
-      <h1>Quanto sobra de verdade em cada venda?</h1>
-      <p>Preencha os valores de uma venda do Mercado Livre ou da Shopee. O lucro aparece na hora.</p>
-    </section>
+    <div id="aba-calculadora" class="aba" role="tabpanel" aria-labelledby="tab-calculadora">
+      <section class="intro">
+        <h1>Quanto sobra de verdade em cada venda?</h1>
+        <p>Preencha os valores de uma venda do Mercado Livre ou da Shopee. O lucro aparece na hora.</p>
+      </section>
 
-    <div class="grade">
-      <form id="calculadora" class="painel" autocomplete="off">
-        <h2>Dados da venda</h2>
+      <div class="grade">
+        <form id="formCalculadora" class="painel" autocomplete="off">
+          <h2>Dados da venda</h2>
 
-        <label>Preço de venda (R$)
-          <input name="preco" inputmode="decimal" value="89,90">
-        </label>
-        <label>Custo do produto (R$)
-          <input name="custoProduto" inputmode="decimal" value="35,00">
-          <small>Quanto você pagou ou gastou para produzir</small>
-        </label>
+          <label>Preço de venda (R$)
+            <input name="preco" inputmode="decimal" value="89,90">
+          </label>
+          <label>Custo do produto (R$)
+            <input name="custoProduto" inputmode="decimal" value="35,00">
+            <small>Quanto você pagou ou gastou para produzir</small>
+          </label>
 
-        <h3>Cobranças da plataforma</h3>
-        <div class="dupla">
-          <label>Comissão (%)
-            <input name="comissaoPct" inputmode="decimal" value="14">
-            <small>Confira a da sua categoria e tipo de anúncio</small>
-          </label>
-          <label>Tarifa fixa (R$)
-            <input name="tarifaFixa" inputmode="decimal" value="0">
-            <small>Cobrada por unidade em alguns preços</small>
-          </label>
-        </div>
-        <label>Frete pago por você (R$)
-          <input name="frete" inputmode="decimal" value="0">
-        </label>
-
-        <h3>Seus outros custos</h3>
-        <div class="dupla">
-          <label>Imposto (%)
-            <input name="impostoPct" inputmode="decimal" value="6">
-            <small>Alíquota sobre a venda</small>
-          </label>
-          <label>Embalagem e etiqueta (R$)
-            <input name="embalagem" inputmode="decimal" value="2,50">
-          </label>
-        </div>
-        <div class="dupla">
-          <label>Anúncios por venda (R$)
-            <input name="anuncios" inputmode="decimal" value="0">
-          </label>
-          <label>Outros (R$)
-            <input name="outros" inputmode="decimal" value="0">
-          </label>
-        </div>
-
-        <h3>Preço ideal</h3>
-        <label>Margem de lucro desejada (%)
-          <input name="margemDesejada" inputmode="decimal" value="20">
-        </label>
-      </form>
-
-      <div class="coluna-resultado">
-        <section id="resultado" class="painel resultado" aria-live="polite">
-          <span class="rotulo">Lucro por venda</span>
-          <span id="lucro" class="lucro">R$ 0,00</span>
-          <div class="numeros">
-            <div><span class="rotulo">Margem</span><span id="margem">—</span></div>
-            <div><span class="rotulo">Custos totais</span><span id="totalCustos">R$ 0,00</span></div>
+          <h3>Cobranças da plataforma</h3>
+          <div class="dupla">
+            <label>Comissão (%)
+              <input name="comissaoPct" inputmode="decimal" value="14">
+              <small>Confira a da sua categoria e tipo de anúncio</small>
+            </label>
+            <label>Tarifa fixa (R$)
+              <input name="tarifaFixa" inputmode="decimal" value="0">
+              <small>Cobrada por unidade em alguns preços</small>
+            </label>
           </div>
-          <p id="aviso" class="aviso"></p>
+          <label>Frete pago por você (R$)
+            <input name="frete" inputmode="decimal" value="0">
+          </label>
+
+          <h3>Seus outros custos</h3>
+          <div class="dupla">
+            <label>Imposto (%)
+              <input name="impostoPct" inputmode="decimal" value="6">
+              <small>Alíquota sobre a venda</small>
+            </label>
+            <label>Embalagem e etiqueta (R$)
+              <input name="embalagem" inputmode="decimal" value="2,50">
+            </label>
+          </div>
+          <div class="dupla">
+            <label>Anúncios por venda (R$)
+              <input name="anuncios" inputmode="decimal" value="0">
+            </label>
+            <label>Outros (R$)
+              <input name="outros" inputmode="decimal" value="0">
+            </label>
+          </div>
+
+          <h3>Preço ideal</h3>
+          <label>Margem de lucro desejada (%)
+            <input name="margemDesejada" inputmode="decimal" value="20">
+          </label>
+        </form>
+
+        <div class="coluna-resultado">
+          <section id="resultado" class="painel resultado" aria-live="polite">
+            <span class="rotulo">Lucro por venda</span>
+            <span id="lucro" class="lucro">R$ 0,00</span>
+            <div class="numeros">
+              <div><span class="rotulo">Margem</span><span id="margem">—</span></div>
+              <div><span class="rotulo">Custos totais</span><span id="totalCustos">R$ 0,00</span></div>
+            </div>
+            <p id="aviso" class="aviso"></p>
+          </section>
+
+          <section class="painel">
+            <h2>Para onde vai o dinheiro</h2>
+            <div id="barra" class="barra"></div>
+            <ul id="detalhes" class="detalhes"></ul>
+          </section>
+
+          <section class="painel">
+            <h2>Preço ideal de venda</h2>
+            <p class="preco-ideal" id="precoIdeal">—</p>
+            <small>Preço para ter a margem desejada com os custos ao lado.</small>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div id="aba-vendas" class="aba" role="tabpanel" aria-labelledby="tab-vendas" hidden>
+      <section class="intro">
+        <h1>Lucro real das suas vendas</h1>
+        <p>Importe o relatório de vendas do Mercado Livre, informe seus custos e veja quanto sobrou em cada venda e em cada produto.</p>
+      </section>
+
+      <div class="grade">
+        <section class="painel">
+          <h2>1. Relatório do Mercado Livre</h2>
+          <label>Arquivo Excel (.xlsx)
+            <input type="file" id="arquivo" accept=".xlsx,.xls">
+            <small>No Mercado Livre: Vendas → botão de baixar → Excel. O arquivo é lido aqui no seu computador; nada é enviado para a internet.</small>
+          </label>
+          <p id="mensagem" class="mensagem"></p>
+        </section>
+
+        <form id="config" class="painel" autocomplete="off">
+          <h2>2. Seus custos</h2>
+          <div class="dupla">
+            <label>Imposto (%)
+              <input name="impostoPct" inputmode="decimal">
+              <small>Alíquota sobre a venda (Simples, Presumido…)</small>
+            </label>
+            <label>Embalagem por venda (R$)
+              <input name="embalagem" inputmode="decimal">
+            </label>
+          </div>
+          <div class="dupla">
+            <label>Gasto com Ads no período (R$)
+              <input name="gastoAds" inputmode="decimal">
+              <small>Veja em Publicidade → Mercado Ads</small>
+            </label>
+            <label>Custos fixos no período (R$)
+              <input name="fixos" inputmode="decimal">
+              <small>Aluguel, internet, funcionário…</small>
+            </label>
+          </div>
+          <small>O custo de cada produto você preenche na tabela "Por produto", abaixo.</small>
+        </form>
+      </div>
+
+      <div id="dados" class="pilha" hidden>
+        <div class="grade">
+          <section id="vResultado" class="painel resultado" aria-live="polite">
+            <span class="rotulo">Lucro no período</span>
+            <span id="vLucro" class="lucro">R$ 0,00</span>
+            <div class="numeros">
+              <div><span class="rotulo">Margem</span><span id="vMargem">—</span></div>
+              <div><span class="rotulo">Vendas</span><span id="qtdVendas">0</span></div>
+              <div><span class="rotulo">Período</span><span id="periodo">—</span></div>
+            </div>
+            <p id="vAviso" class="aviso"></p>
+            <p id="detalheContagem" class="mensagem"></p>
+          </section>
+
+          <section class="painel">
+            <h2>Para onde foi o dinheiro</h2>
+            <div id="vBarra" class="barra"></div>
+            <ul id="cascata" class="detalhes cascata"></ul>
+          </section>
+        </div>
+
+        <section class="painel">
+          <div class="barra-ferramentas">
+            <h2>Por produto</h2>
+            <div class="filtros">
+              <label class="marcar"><input type="checkbox" id="soProblemas"> Só prejuízo ou margem abaixo de 10%</label>
+              <select id="ordem" aria-label="Ordenar produtos">
+                <option value="receita">Maior faturamento</option>
+                <option value="lucro">Maior lucro</option>
+                <option value="margem">Menor margem</option>
+                <option value="semCusto">Sem custo primeiro</option>
+              </select>
+            </div>
+          </div>
+          <div class="tabela-rolagem">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th class="num">Vendas</th>
+                  <th class="num">Faturamento</th>
+                  <th class="num">Tarifa ML</th>
+                  <th class="num">Frete</th>
+                  <th class="num">Repasse ML</th>
+                  <th class="num">Custo unit.</th>
+                  <th class="num">Lucro</th>
+                  <th class="num">Margem</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaProdutos"></tbody>
+            </table>
+          </div>
         </section>
 
         <section class="painel">
-          <h2>Para onde vai o dinheiro</h2>
-          <div id="barra" class="barra"></div>
-          <ul id="detalhes" class="detalhes"></ul>
+          <h2>Por venda</h2>
+          <div class="tabela-rolagem">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Produto</th>
+                  <th class="num">Faturamento</th>
+                  <th class="num">Tarifa ML</th>
+                  <th class="num">Frete</th>
+                  <th class="num">Repasse ML</th>
+                  <th class="num">Custo produto</th>
+                  <th class="num">Imposto, emb. e Ads</th>
+                  <th class="num">Lucro</th>
+                  <th class="num">Margem</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaVendas"></tbody>
+            </table>
+          </div>
         </section>
 
-        <section class="painel">
-          <h2>Preço ideal de venda</h2>
-          <p class="preco-ideal" id="precoIdeal">—</p>
-          <small>Preço para ter a margem desejada com os custos ao lado.</small>
-        </section>
+        <div class="acoes">
+          <button type="button" id="baixar" class="botao">Baixar Excel com o resultado</button>
+          <button type="button" id="limpar" class="botao secundario">Remover vendas importadas</button>
+        </div>
       </div>
     </div>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="js/formato.js"></script>
   <script src="js/calculos.js"></script>
+  <script src="js/importar-ml.js"></script>
   <script src="js/calculadora.js"></script>
+  <script src="js/vendas.js"></script>
+  <script src="js/abas.js"></script>
 </body>
 </html>

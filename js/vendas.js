@@ -1,4 +1,4 @@
-// Tela "Vendas importadas": lê o Excel do Mercado Livre, guarda os custos
+// Aba "Vendas importadas": lê o Excel do Mercado Livre, guarda os custos
 // que o vendedor digita e mostra o lucro real por venda e por produto.
 
 // Tudo fica salvo neste navegador (localStorage). Se o navegador bloquear,
@@ -70,7 +70,7 @@ el('arquivo').addEventListener('change', async (evento) => {
     importacao = { arquivo: arquivo.name, vendas };
     salvar(CHAVE_VENDAS, importacao);
     mensagem(`${vendas.length} vendas importadas de ${arquivo.name}.`);
-    atualizar();
+    atualizarVendas();
   } catch (erro) {
     mensagem(erro.message, true);
   }
@@ -85,7 +85,7 @@ for (const campo of Object.keys(config)) formConfig.elements[campo].value = para
 formConfig.addEventListener('input', () => {
   for (const campo of Object.keys(config)) config[campo] = paraNumero(formConfig.elements[campo].value);
   salvar(CHAVE_CONFIG, config);
-  atualizar();
+  atualizarVendas();
 });
 
 // ---------- Custo de cada produto (digitado na tabela) ----------
@@ -100,7 +100,7 @@ el('tabelaProdutos').addEventListener('change', (evento) => {
   // Redesenha depois que o foco já foi para o próximo campo (Tab), e devolve o foco a ele.
   setTimeout(() => {
     const foco = document.activeElement && document.activeElement.dataset.chave;
-    atualizar();
+    atualizarVendas();
     if (foco) document.querySelector(`input[data-chave="${CSS.escape(foco)}"]`)?.focus();
   }, 0);
 });
@@ -108,12 +108,12 @@ el('tabelaProdutos').addEventListener('keydown', (evento) => {
   if (evento.key === 'Enter' && evento.target.dataset.chave) evento.target.blur();
 });
 
-el('soProblemas').addEventListener('change', () => atualizar());
-el('ordem').addEventListener('change', () => atualizar());
+el('soProblemas').addEventListener('change', () => atualizarVendas());
+el('ordem').addEventListener('change', () => atualizarVendas());
 
 // ---------- Desenhar a tela ----------
 
-function atualizar() {
+function atualizarVendas() {
   el('dados').hidden = !importacao;
   if (!importacao) return;
 
@@ -124,9 +124,9 @@ function atualizar() {
 }
 
 function desenharResumo(r) {
-  el('resultado').classList.toggle('prejuizo', r.lucro < 0);
-  el('lucro').textContent = reais(r.lucro);
-  el('margem').textContent = margemTexto(r.margemPct);
+  el('vResultado').classList.toggle('prejuizo', r.lucro < 0);
+  el('vLucro').textContent = reais(r.lucro);
+  el('vMargem').textContent = margemTexto(r.margemPct);
   el('qtdVendas').textContent = r.vendas;
   el('periodo').textContent = `${dataLonga(r.inicio)} a ${dataLonga(r.fim)}`;
 
@@ -138,7 +138,7 @@ function desenharResumo(r) {
   if (!config.gastoAds && r.vendasComAds) {
     avisos.push(`${r.vendasComAds} vendas vieram de anúncio pago, mas o gasto com Ads não foi informado.`);
   }
-  el('aviso').textContent = avisos.join(' ');
+  el('vAviso').textContent = avisos.join(' ');
   el('detalheContagem').textContent =
     `${r.canceladas} canceladas e ${r.devolucoes} devoluções no período (não entram na contagem de vendas).`;
 
@@ -146,7 +146,7 @@ function desenharResumo(r) {
   const base = Math.max(r.receita + r.descontos, PARTES.reduce((s, p) => s + r[p.campo], 0) + Math.max(r.lucro, 0));
   const pedacos = PARTES.filter((p) => r[p.campo] > 0).map((p) => ({ ...p, valor: r[p.campo] }));
   if (r.lucro > 0) pedacos.push({ nome: 'Lucro', cor: 'var(--c-lucro)', valor: r.lucro });
-  el('barra').innerHTML = pedacos.map((p) =>
+  el('vBarra').innerHTML = pedacos.map((p) =>
     `<span style="width:${(p.valor / base) * 100}%;background:${p.cor}" title="${p.nome}: ${reais(p.valor)}"></span>`).join('');
 
   // Cascata: do faturamento até o lucro, passando pelo que o ML repassa.
@@ -257,8 +257,8 @@ el('limpar').addEventListener('click', () => {
   relatorio = null;
   salvar(CHAVE_VENDAS, null);
   mensagem('Vendas removidas. Os custos dos produtos continuam salvos.');
-  atualizar();
+  atualizarVendas();
 });
 
 if (importacao) mensagem(`Mostrando ${importacao.vendas.length} vendas de ${importacao.arquivo}.`);
-atualizar();
+atualizarVendas();
