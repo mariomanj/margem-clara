@@ -49,13 +49,14 @@ function calcularPrecoIdeal(venda, margemDesejadaPct) {
 const CAMPOS_VENDA = ['unidades', 'receita', 'tarifa', 'frete', 'descontos', 'reembolsos', 'total'];
 const CAMPOS_CUSTO = ['produto', 'imposto', 'embalagem', 'anuncios'];
 
-// Calcula o lucro de cada venda importada e soma por produto e no total.
+// Calcula o lucro de cada venda importada e soma por produto, por marketplace e no total.
 // Cada venda já vem com o que o marketplace descontou (tarifa, frete, reembolso)
 // e com o "total", que é o dinheiro repassado. Daqui tiramos o que só o
 // vendedor sabe: custo do produto, imposto, embalagem e Ads.
 //   custos: { chaveDoProduto: custo unitário em R$ }
 //   config: { impostoPct, embalagem (R$ por venda), gastoAds e fixos (R$ no período) }
-function calcularRelatorio(vendas, custos, config) {
+//   marketplace: 'mercadolivre' | 'shopee' para mostrar só um; vazio = todos
+function calcularRelatorio(vendas, custos, config, marketplace = '') {
   const validas = vendas.filter((v) => v.tipo !== 'cancelada');
 
   // O gasto com Ads do período é dividido entre as vendas que vieram de anúncio,
@@ -66,7 +67,7 @@ function calcularRelatorio(vendas, custos, config) {
   const adsPorReal = baseAds > 0 ? (config.gastoAds || 0) / baseAds : 0;
   const recebeAds = new Set(comAds);
 
-  const resultado = vendas.map((v) => {
+  const todas = vendas.map((v) => {
     const custoUnitario = custos[v.chave] ?? null;
     // Na devolução o produto volta para o estoque e a nota é cancelada:
     // não entra custo do produto nem imposto, só o prejuízo que o marketplace já descontou.
@@ -78,11 +79,15 @@ function calcularRelatorio(vendas, custos, config) {
       anuncios: recebeAds.has(v) ? v.receita * adsPorReal : 0,
     };
     const lucro = v.total - CAMPOS_CUSTO.reduce((soma, campo) => soma + c[campo], 0);
-    return { ...v, custoUnitario, semCusto: conta && custoUnitario === null, custos: c, lucro };
+    const liquido = v.receita - v.reembolsos;
+    return { ...v, custoUnitario, semCusto: conta && custoUnitario === null, custos: c, lucro,
+      margemPct: liquido > 0 ? (lucro / liquido) * 100 : null };
   });
+  // O rateio acima usa todas as vendas; o filtro só muda o que é somado e mostrado.
+  const resultado = marketplace ? todas.filter((v) => v.marketplace === marketplace) : todas;
 
-  // Soma vendas em um "grupo" (um produto ou o total geral).
-  const novoGrupo = (extra) => ({ ...extra, vendas: 0, lucro: 0, semCusto: false,
+  // Soma vendas em um "grupo" (um produto, um marketplace ou o total geral).
+  const novoGrupo = (extra) => ({ ...extra, vendas: 0, lucro: 0, semCusto: false, estimado: false,
     ...Object.fromEntries([...CAMPOS_VENDA, ...CAMPOS_CUSTO].map((campo) => [campo, 0])) });
   const somar = (grupo, v) => {
     if (v.tipo !== 'cancelada') grupo.vendas += 1;
@@ -90,6 +95,7 @@ function calcularRelatorio(vendas, custos, config) {
     for (const campo of CAMPOS_CUSTO) grupo[campo] += v.custos[campo];
     grupo.lucro += v.lucro;
     grupo.semCusto = grupo.semCusto || v.semCusto;
+    grupo.estimado = grupo.estimado || Boolean(v.estimado);
   };
   // Margem sobre o que foi vendido de fato (sem o que voltou em reembolso).
   const fecharMargem = (grupo) => {
@@ -100,31 +106,42 @@ function calcularRelatorio(vendas, custos, config) {
   const porProduto = new Map();
   const total = novoGrupo({});
   for (const v of resultado) {
-    v.margemPct = v.receita - v.reembolsos > 0 ? (v.lucro / (v.receita - v.reembolsos)) * 100 : null;
     if (!porProduto.has(v.chave)) {
       porProduto.set(v.chave, novoGrupo({ chave: v.chave, titulo: v.titulo, sku: v.sku,
-        anuncio: v.anuncio, variacao: v.variacao, custoUnitario: v.custoUnitario }));
+        anuncio: v.anuncio, variacao: v.variacao, custoUnitario: v.custoUnitario, marketplaces: [] }));
     }
-    somar(porProduto.get(v.chave), v);
+    const produto = porProduto.get(v.chave);
+    somar(produto, v);
+    if (!produto.marketplaces.includes(v.marketplace)) produto.marketplaces.push(v.marketplace);
     somar(total, v);
   }
   const produtos = [...porProduto.values()];
   produtos.forEach(fecharMargem);
   fecharMargem(total);
 
-  const datas = vendas.map((v) => v.data).filter(Boolean).sort();
+  // Comparação entre marketplaces: sempre com todas as vendas, independente do filtro.
+  const porMarketplace = {};
+  for (const v of todas) {
+    porMarketplace[v.marketplace] = porMarketplace[v.marketplace] || novoGrupo({ marketplace: v.marketplace });
+    somar(porMarketplace[v.marketplace], v);
+  }
+  Object.values(porMarketplace).forEach(fecharMargem);
+
+  // Custos fixos são da empresa inteira: só entram na visão com todos os marketplaces.
+  const fixos = marketplace ? 0 : (config.fixos || 0);
+  const datas = resultado.map((v) => v.data).filter(Boolean).sort();
   const resumo = {
     ...total,
-    canceladas: vendas.filter((v) => v.tipo === 'cancelada').length,
-    devolucoes: vendas.filter((v) => v.tipo === 'devolucao').length,
-    vendasComAds: validas.filter((v) => v.publicidade).length,
+    canceladas: resultado.filter((v) => v.tipo === 'cancelada').length,
+    devolucoes: resultado.filter((v) => v.tipo === 'devolucao').length,
+    vendasComAds: resultado.filter((v) => v.publicidade && v.tipo !== 'cancelada').length,
     produtosSemCusto: produtos.filter((p) => p.semCusto).length,
     vendasSemCusto: resultado.filter((v) => v.semCusto).length,
     inicio: datas[0] || null,
     fim: datas[datas.length - 1] || null,
-    fixos: config.fixos || 0,
-    lucroAposFixos: total.lucro - (config.fixos || 0),
+    fixos,
+    lucroAposFixos: total.lucro - fixos,
   };
 
-  return { vendas: resultado, produtos, resumo };
+  return { vendas: resultado, produtos, porMarketplace, resumo };
 }

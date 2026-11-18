@@ -104,16 +104,21 @@
     <div id="aba-vendas" class="aba" role="tabpanel" aria-labelledby="tab-vendas" hidden>
       <section class="intro">
         <h1>Lucro real das suas vendas</h1>
-        <p>Importe o relatório de vendas do Mercado Livre, informe seus custos e veja quanto sobrou em cada venda e em cada produto.</p>
+        <p>Importe os relatórios de vendas do Mercado Livre e da Shopee, informe seus custos e veja quanto sobrou em cada venda, em cada produto e em cada marketplace.</p>
       </section>
 
       <div class="grade">
         <section class="painel">
-          <h2>1. Relatório do Mercado Livre</h2>
-          <label>Arquivo Excel (.xlsx)
+          <h2>1. Relatórios de vendas</h2>
+          <label>Arquivo Excel (.xlsx) do Mercado Livre ou da Shopee
             <input type="file" id="arquivo" accept=".xlsx,.xls">
-            <small>No Mercado Livre: Vendas → botão de baixar → Excel. O arquivo é lido aqui no seu computador; nada é enviado para a internet.</small>
+            <small>Importe um de cada vez; o site reconhece de qual marketplace é.</small>
           </label>
+          <ul class="ajuda">
+            <li><strong>Mercado Livre:</strong> Vendas → botão de baixar → Excel.</li>
+            <li><strong>Shopee:</strong> Meus pedidos → aba Todos → Exportar.</li>
+          </ul>
+          <small>O arquivo é lido aqui no seu computador; nada é enviado para a internet.</small>
           <p id="mensagem" class="mensagem"></p>
         </section>
 
@@ -129,9 +134,9 @@
             </label>
           </div>
           <div class="dupla">
-            <label>Gasto com Ads no período (R$)
+            <label>Gasto com Mercado Ads no período (R$)
               <input name="gastoAds" inputmode="decimal">
-              <small>Veja em Publicidade → Mercado Ads</small>
+              <small>Dividido entre as vendas que vieram de anúncio</small>
             </label>
             <label>Custos fixos no período (R$)
               <input name="fixos" inputmode="decimal">
@@ -143,6 +148,12 @@
       </div>
 
       <div id="dados" class="pilha" hidden>
+        <select id="filtroMarketplace" class="filtro-marketplace" aria-label="Marketplace" hidden>
+          <option value="">Todos os marketplaces</option>
+          <option value="mercadolivre">Só Mercado Livre</option>
+          <option value="shopee">Só Shopee</option>
+        </select>
+
         <div class="grade">
           <section id="vResultado" class="painel resultado" aria-live="polite">
             <span class="rotulo">Lucro no período</span>
@@ -162,6 +173,30 @@
             <ul id="cascata" class="detalhes cascata"></ul>
           </section>
         </div>
+
+        <section id="painelComparacao" class="painel" hidden>
+          <h2>Mercado Livre x Shopee</h2>
+          <div class="tabela-rolagem">
+            <table>
+              <thead>
+                <tr>
+                  <th>Marketplace</th>
+                  <th class="num">Vendas</th>
+                  <th class="num">Faturamento</th>
+                  <th class="num">Ticket médio</th>
+                  <th class="num">Tarifas</th>
+                  <th class="num">Frete</th>
+                  <th class="num">Cancel. e devol.</th>
+                  <th class="num">Repasse</th>
+                  <th class="num">Lucro</th>
+                  <th class="num">Margem</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaComparacao"></tbody>
+            </table>
+          </div>
+          <small>Tarifas e frete em % do que foi vendido de fato; cancelamentos e devoluções em % do faturamento bruto.</small>
+        </section>
 
         <section class="painel">
           <div class="barra-ferramentas">
@@ -183,9 +218,9 @@
                   <th>Produto</th>
                   <th class="num">Vendas</th>
                   <th class="num">Faturamento</th>
-                  <th class="num">Tarifa ML</th>
+                  <th class="num">Tarifas</th>
                   <th class="num">Frete</th>
-                  <th class="num">Repasse ML</th>
+                  <th class="num">Repasse</th>
                   <th class="num">Custo unit.</th>
                   <th class="num">Lucro</th>
                   <th class="num">Margem</th>
@@ -205,9 +240,9 @@
                   <th>Data</th>
                   <th>Produto</th>
                   <th class="num">Faturamento</th>
-                  <th class="num">Tarifa ML</th>
+                  <th class="num">Tarifas</th>
                   <th class="num">Frete</th>
-                  <th class="num">Repasse ML</th>
+                  <th class="num">Repasse</th>
                   <th class="num">Custo produto</th>
                   <th class="num">Imposto, emb. e Ads</th>
                   <th class="num">Lucro</th>
@@ -231,6 +266,7 @@
   <script src="js/formato.js"></script>
   <script src="js/calculos.js"></script>
   <script src="js/importar-ml.js"></script>
+  <script src="js/importar-shopee.js"></script>
   <script src="js/calculadora.js"></script>
   <script src="js/vendas.js"></script>
   <script src="js/abas.js"></script>

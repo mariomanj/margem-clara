@@ -92,6 +92,7 @@ function lerRelatorioMercadoLivre(linhas) {
     const variacao = texto('variacao');
 
     vendas.push({
+      marketplace: 'mercadolivre',
       numero: numeroVenda,
       data: lerData(texto('data')),
       status: texto('status'),

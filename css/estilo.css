@@ -227,6 +227,13 @@ input.custo::placeholder { color: var(--suave); font-size: .8rem; }
   color: var(--suave);
 }
 .etiqueta.alerta { color: var(--negativo); border-color: currentColor; }
+td.produto small .etiqueta:first-child { margin-left: 0; }
+.mp-mercadolivre, .mp-shopee { margin: 0 4px 0 0; font-weight: 600; }
+.mp-mercadolivre { color: var(--c-tarifa); border-color: currentColor; }
+.mp-shopee { color: var(--c-comissao); border-color: currentColor; }
+
+.ajuda { margin: 0 0 8px; padding-left: 18px; font-size: .85rem; color: var(--suave); }
+.filtro-marketplace { justify-self: start; }
 
 .acoes { display: flex; flex-wrap: wrap; gap: 12px; }
 .botao {
